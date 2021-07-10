@@ -1,6 +1,7 @@
 package com.team.user;
 
 import com.team.post.Post;
+import com.team.post.PostScrap;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,6 +59,10 @@ public class User {
     public void addPost(Post post){
         posts.add(post);
     }
+
+    @OneToMany(mappedBy = "user")
+    private Set<PostScrap> postScraps = new LinkedHashSet<>();
+
 
     @Builder
     public User(Long id, String email, String password, String nickname, String name,
