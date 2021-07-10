@@ -51,6 +51,7 @@ public class Post {
     }
     private void setAuthor(User user){
         this.user = user;
+        user.getPosts().add(this);
     }
 
     public void addLike(PostLike postLike){

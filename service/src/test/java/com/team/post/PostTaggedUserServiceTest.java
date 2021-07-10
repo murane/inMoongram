@@ -1,6 +1,6 @@
-package com.team.user;
+package com.team.post;
 
-import com.team.user.dto.output.FollowListOutput;
+import com.team.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,26 +8,30 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+class PostTaggedUserServiceTest {
+
     @Mock
-    UserRepository userRepository;
+    private PostTaggedUserRepository postTaggedUserRepository;
 
     @InjectMocks
-    UserService userService;
+    private PostTaggedUserService postTaggedUserService;
 
     private User user1;
     private User user2;
     private User user3;
 
-    private Follow follow1;
-    private Follow follow2;
+    private Post post;
+
+    private PostTaggedUser tag1;
+    private PostTaggedUser tag2;
 
     @BeforeEach
     void setUp() {
@@ -37,41 +41,35 @@ class UserServiceTest {
                 .email("test1@test.com")
                 .password("testPassword1")
                 .build();
+        user1.setIdForTest(1L);
         user2 = User.builder()
                 .name("testUser2")
                 .nickname("testNickname2")
                 .email("test2@test.com")
                 .password("testPassword2")
                 .build();
+        user2.setIdForTest(2L);
         user3 = User.builder()
                 .name("testUser3")
                 .nickname("testNickname3")
                 .email("test3@test.com")
                 .password("testPassword3")
                 .build();
+        user3.setIdForTest(3L);
 
-        follow1 = Follow.builder()
-                .follower(user1)
-                .followee(user2)
-                .build();
-        follow2 = Follow.builder()
-                .follower(user1)
-                .followee(user3)
-                .build();
+        post = new Post("test-content", user1);
+
+        tag1 = new PostTaggedUser(user2, post);
+        tag2 = new PostTaggedUser(user3, post);
     }
 
     @Test
-    void 팔로우_목록_조회() {
-        given(userRepository.findFollowingUserById(any())).willReturn(Optional.of(user1));
-        FollowListOutput followList = userService.getFollowList(1L);
+    void tagAll() {
+        given(postTaggedUserRepository.save(any())).willReturn(tag1).willReturn(tag2);
+        List<PostTaggedUser> output = postTaggedUserService.tagAll(Arrays.asList(user2, user3), post);
 
-        assertThat(followList.getUsers().size()).isEqualTo(2);
-        assertThat(followList.getUsers().get(0).getName()).isEqualTo(user2.getName());
-        assertThat(followList.getUsers().get(0).getNickname()).isEqualTo(user2.getNickname());
-        assertThat(followList.getUsers().get(1).getName()).isEqualTo(user3.getName());
-        assertThat(followList.getUsers().get(1).getNickname()).isEqualTo(user3.getNickname());
-
-//        TODO: follow Hashtag test
-//        assertThat(followList.getHashtags().size()).isEqualTo(1);
+        assertThat(output.size()).isEqualTo(2);
+        assertThat(output.get(0).getUser().getId()).isEqualTo(2L);
+        assertThat(output.get(1).getUser().getId()).isEqualTo(3L);
     }
 }
