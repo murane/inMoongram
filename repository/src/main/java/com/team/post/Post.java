@@ -1,5 +1,7 @@
 package com.team.post;
 
+import com.team.comment.Comment;
+import com.team.tag.PostTaggedUser;
 import com.team.user.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,9 +28,6 @@ public class Post {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    private LocalDateTime lastModified;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -41,6 +40,9 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     private Set<PostTaggedUser> postTaggedUsers = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "post")
+    private Set<Comment> comments = new LinkedHashSet<>();
 
     public Post(String content, User user) {
         this.content = content;
@@ -63,6 +65,10 @@ public class Post {
         postTaggedUsers.forEach(
                 it->it.setPost(this)
         );
+    }
+
+    public void addComment(Comment comment){
+        this.comments.add(comment);
     }
 
     public void addImages(List<PostImage> postImages){

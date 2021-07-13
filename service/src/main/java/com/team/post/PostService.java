@@ -2,6 +2,7 @@ package com.team.post;
 
 import com.team.post.dto.input.SavePostInput;
 import com.team.post.dto.output.SavePostOutput;
+import com.team.tag.PostTaggedUser;
 import com.team.user.User;
 import com.team.user.UserService;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,7 @@
 package com.team.post;
 
+import com.team.tag.PostTaggedUser;
+import com.team.tag.PostTaggedUserRepository;
 import com.team.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

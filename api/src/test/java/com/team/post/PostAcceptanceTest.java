@@ -40,14 +40,16 @@ class PostAcceptanceTest {
 
     private MultipartFile postImage1;
     private MultipartFile postImage2;
-
+    String absolutePath;
     @BeforeEach
     void setUp() throws IOException {
+        String path = "src/test/resources/images";
+        absolutePath = new File(path).getAbsolutePath();
         user1 = userData.saveUser("testUser1", "testNickname1", "test1@test.com");
         user2 = userData.saveUser("testUser2", "testNickname2", "test2@test.com");
         user3 = userData.saveUser("testUser3", "testNickname3", "test3@test.com");
-        postImage1 = new MockMultipartFile("apple.jpeg", new FileInputStream("images/apple.jpeg"));
-        postImage2 = new MockMultipartFile("grape.jpeg", new FileInputStream("images/grape.jpeg"));
+        postImage1 = new MockMultipartFile("apple.jpeg", new FileInputStream(absolutePath+"/apple.jpeg"));
+        postImage2 = new MockMultipartFile("grape.jpeg", new FileInputStream(absolutePath+"/grape.jpeg"));
     }
 
     @AfterEach
@@ -68,11 +70,13 @@ class PostAcceptanceTest {
                 given()
                         .port(port)
                         .accept(ContentType.JSON)
-                        .queryParam("userId", request.getUserId())
-                        .queryParam("content", request.getContent())
-                        .queryParam("taggedUserIds", request.getTaggedUserIds())
-                        .multiPart("postImages", new File("images/apple.jpeg"))
-                        .multiPart("postImages", new File("images/grape.jpeg"))
+                        .multiPart("userId", request.getUserId())
+                        .multiPart("content", request.getContent())
+                        .multiPart("taggedUserIds", user2.getId())
+                        .multiPart("taggedUserIds", user3.getId())
+                        .multiPart("postImages", new File(absolutePath+"/apple.jpeg"))
+                        .multiPart("postImages", new File(absolutePath+"/grape.jpeg"))
+                        .log().all()
                 .when()
                         .post("/post")
                 .then()

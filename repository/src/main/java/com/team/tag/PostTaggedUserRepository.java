@@ -1,4 +1,4 @@
-package com.team.post;
+package com.team.tag;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

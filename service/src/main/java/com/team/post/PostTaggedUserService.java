@@ -1,5 +1,7 @@
 package com.team.post;
 
+import com.team.tag.PostTaggedUser;
+import com.team.tag.PostTaggedUserRepository;
 import com.team.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
