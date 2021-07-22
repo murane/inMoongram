@@ -15,11 +15,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +34,7 @@ public class Comment {
 
     private String content;
 
-    @CreationTimestamp
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,6 +57,9 @@ public class Comment {
 
     @OneToMany(mappedBy = "comment", orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<CommentTaggedUser> commentTaggedUsers = new LinkedHashSet<>();
+  
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
+    private Set<CommentLike> commentLikes = new LinkedHashSet<>();
 
     @Builder
     public Comment(Long id, String content, User user, Post post, Comment superComment) {
@@ -78,5 +88,8 @@ public class Comment {
 
     public void deleteSubComment(Comment comment) {
         subComments.remove(comment);
+
+    public void setIdForTest(Long id) {
+        this.id = id;
     }
 }

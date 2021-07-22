@@ -19,6 +19,10 @@ public class PostTaggedUserService {
     private final UserService userService;
 
     public List<PostTaggedUser> tagAll(List<User> users, Post post) {
+        if (users == null) {
+            return null;
+        }
+
         return users.stream()
                 .map(it -> taggedUserRepository.save(new PostTaggedUser(it, post)))
                 .collect(Collectors.toList());

@@ -91,8 +91,8 @@ public class User {
         this.profileImage = profileImage;
     }
 
-    public void setIdForTest(long id) {
-        this.id=id;
+    public void setIdForTest(Long id) {
+        this.id = id;
     }
 }
 

@@ -3,6 +3,7 @@ package com.team.post.util;
 import com.team.post.PostImage;
 import com.team.post.PostImageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,8 +28,9 @@ public class ImageUploader {
         }
         String uploadFileName = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(uploadFileName);
-        multipartFile.transferTo(new File(getFullPath(storeFileName)));
-        return postImageService.save(new PostImage(uploadFileName, storeFileName));
+        String storePath = getFullPath(storeFileName);
+        multipartFile.transferTo(new File(storePath));
+        return postImageService.save(new PostImage(uploadFileName, storeFileName, storePath));
     }
 
     public List<PostImage> storeImages(List<MultipartFile> multipartFiles) {

@@ -25,4 +25,7 @@ public class TagKeyword {
         this.id = id;
         this.keyword = keyword;
     }
+    public TagKeyword(String keyword) {
+        this.keyword = keyword;
+    }
 }
