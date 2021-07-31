@@ -1,6 +1,5 @@
 package com.team.comment.dto.request;
 
-import com.team.comment.Comment;
 import com.team.comment.dto.input.CommentLikePlusInput;
 import lombok.AccessLevel;
 import lombok.Data;

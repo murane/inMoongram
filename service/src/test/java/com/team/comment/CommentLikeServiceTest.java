@@ -15,10 +15,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class CommentLikeServiceTest {
+class CommentLikeServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -43,7 +44,7 @@ public class CommentLikeServiceTest {
                 .nickname("peach")
                 .build();
         user1.setIdForTest(1L);
-        post1 = new Post("hello" ,user1);
+        post1 = new Post("hello", user1);
         post1.setIdForTest(1L);
         comment1 = Comment.builder()
                 .content("안녕하세요")

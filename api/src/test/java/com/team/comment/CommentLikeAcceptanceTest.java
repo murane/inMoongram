@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
-import static io.restassured.RestAssured.*;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CommentLikeAcceptanceTest {
+class CommentLikeAcceptanceTest {
     @LocalServerPort
     private int port;
 
@@ -59,9 +59,9 @@ public class CommentLikeAcceptanceTest {
                 .accept("application/json")
                 .contentType("application/json")
                 .body(request)
-        .when()
+                .when()
                 .post("/comment-like")
-        .then()
+                .then()
                 .statusCode(201)
                 .body("commentLikeId", is(1));
     }
@@ -73,9 +73,9 @@ public class CommentLikeAcceptanceTest {
         given()
                 .port(port)
                 .accept("application/json")
-        .when()
+                .when()
                 .delete("/comment-like/{comment-like-id}", saved.getId())
-        .then()
+                .then()
                 .statusCode(204);
     }
 }

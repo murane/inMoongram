@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class CommentLikeTest {
+class CommentLikeTest {
 
     @Autowired
     private CommentLikeRepository commentLikeRepository;
@@ -26,6 +26,7 @@ public class CommentLikeTest {
     private Post post;
     private Comment comment;
     private CommentLike commentLike;
+
     @BeforeEach
     void setUp() {
         user = userRepository.save(User.builder()
