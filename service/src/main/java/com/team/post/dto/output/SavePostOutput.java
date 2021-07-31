@@ -39,7 +39,7 @@ public class SavePostOutput {
         this.userId = post.getUser().getId();
         this.postId = post.getId();
         this.content = post.getContent();
-        this.postImages = post.getPostImages().stream().map(PostImage::getUploadFileName).collect(Collectors.toList());
+        this.postImages = post.getPostImages().stream().map(PostImage::getStoreFileName).collect(Collectors.toList());
         this.taggedUserIds = post.getPostTaggedUsers().stream().map(it -> it.getUser().getId()).collect(Collectors.toList());
         this.taggedKeywords = post.getPostTaggedKeywords().stream().map(PostTaggedKeyword::getTagKeyword).map(TagKeyword::getKeyword).collect(Collectors.toList());
         this.createdAt = post.getCreatedAt();

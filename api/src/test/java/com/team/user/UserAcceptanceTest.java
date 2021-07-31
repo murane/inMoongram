@@ -1,10 +1,10 @@
 package com.team.user;
 
-import com.team.QueryConfig;
 import com.team.dbutil.DatabaseCleanup;
 import com.team.dbutil.FollowData;
 import com.team.dbutil.UserData;
 import com.team.post.dto.response.FeedResponse;
+import com.team.post.dto.response.SavePostResponse;
 import com.team.user.dto.output.FollowListOutput;
 import com.team.user.dto.request.UserProfileModificationRequest;
 import com.team.user.dto.response.FollowerInfoListResponse;
@@ -19,12 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.util.StopWatch;
 
-import java.util.*;
 import java.io.File;
+import java.util.*;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -239,9 +238,9 @@ class UserAcceptanceTest {
                         .port(port)
                         .accept("application/json")
                         .param("page-no", 1)
-                        .when()
+                .when()
                         .get("/user/{user-id}/feed", user1.getId())
-                        .then()
+                .then()
                         .statusCode(200)
                         .extract()
                         .as(FeedResponse.class);
@@ -255,14 +254,29 @@ class UserAcceptanceTest {
     private void savePost(User user, String content) {
         String path = "src/test/resources/images";
         String absolutePath = new File(path).getAbsolutePath();
-        given()
-                .port(port)
-                .accept(ContentType.JSON)
-                .multiPart("userId", user.getId())
-                .multiPart("content", content)
-                .multiPart("postImages", new File(absolutePath+"/apple.jpeg"))
-        .when()
-                .post("/post")
-        .then();
+        SavePostResponse response =
+                given()
+                        .port(port)
+                        .accept(ContentType.JSON)
+                        .multiPart("userId", user.getId())
+                        .multiPart("content", content)
+                        .multiPart("taggedUserIds", 2L)
+                        .multiPart("taggedUserIds", 3L)
+                        .multiPart("taggedUserIds", 4L)
+                        .multiPart("postImages", new File(absolutePath + "/apple.jpeg"))
+                .when()
+                        .post("/post")
+                .then()
+                        .extract()
+                        .as(SavePostResponse.class);
+
+        deleteTestUploadImages(absolutePath, response);
+    }
+
+    private void deleteTestUploadImages(String absolutePath, SavePostResponse response) {
+        response.getPostImages()
+                .stream()
+                .map(fileName -> new File(absolutePath + "/" + fileName))
+                .forEach(File::delete);
     }
 }

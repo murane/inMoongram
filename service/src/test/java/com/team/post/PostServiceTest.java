@@ -111,8 +111,6 @@ class PostServiceTest {
 
         assertThat(output.getContent()).isEqualTo(input.getContent());
         assertThat(output.getPostImages().size()).isEqualTo(2);
-        assertThat(output.getPostImages().get(0)).isEqualTo(postImage1.getUploadFileName());
-        assertThat(output.getPostImages().get(1)).isEqualTo(postImage2.getUploadFileName());
         assertThat(output.getTaggedUserIds().size()).isEqualTo(2);
         assertThat(output.getTaggedUserIds().get(0)).isEqualTo(user2.getId());
         assertThat(output.getTaggedUserIds().get(1)).isEqualTo(user3.getId());

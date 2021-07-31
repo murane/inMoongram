@@ -50,15 +50,7 @@ public class UserController {
     @GetMapping("/{user-id}/feed")
     public ResponseEntity<FeedResponse> getFeed(@PathVariable("user-id") Long userId,
                                                 @Valid @Positive @RequestParam("page-no") int page) {
-        FeedOutput feedOutput = getFeedOutput(userId, page);
-        return ResponseEntity.ok(new FeedResponse(feedOutput));
-    }
-
-    private FeedOutput getFeedOutput(Long userId, int page) {
-        FeedInput feedInput = FeedInput.builder()
-                .userId(userId)
-                .page(page)
-                .build();
-        return postService.getFeed(feedInput);
+        FeedOutput output = postService.getFeed(new FeedInput(userId, page));
+        return ResponseEntity.ok(new FeedResponse(output));
     }
 }
