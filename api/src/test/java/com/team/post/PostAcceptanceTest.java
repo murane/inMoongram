@@ -43,6 +43,7 @@ class PostAcceptanceTest {
     private User user3;
 
     String absolutePath;
+
     @BeforeEach
     void setUp() {
 
@@ -60,8 +61,8 @@ class PostAcceptanceTest {
 
     @Test
     void 게시글_저장() throws IOException {
-        MultipartFile postImage1 = new MockMultipartFile("apple.jpeg", new FileInputStream(absolutePath+"/apple.jpeg"));
-        MultipartFile postImage2 = new MockMultipartFile("grape.jpeg", new FileInputStream(absolutePath+"/grape.jpeg"));
+        MultipartFile postImage1 = new MockMultipartFile("apple.jpeg", new FileInputStream(absolutePath + "/apple.jpeg"));
+        MultipartFile postImage2 = new MockMultipartFile("grape.jpeg", new FileInputStream(absolutePath + "/grape.jpeg"));
         String keyword = "inMoongram";
         SavePostRequest request = SavePostRequest.builder()
                 .userId(user1.getId())
@@ -80,12 +81,12 @@ class PostAcceptanceTest {
                         .multiPart("taggedUserIds", user2.getId())
                         .multiPart("taggedUserIds", user3.getId())
                         .multiPart("taggedKeywords", keyword)
-                        .multiPart("postImages", new File(absolutePath+"/apple.jpeg"))
-                        .multiPart("postImages", new File(absolutePath+"/grape.jpeg"))
+                        .multiPart("postImages", new File(absolutePath + "/apple.jpeg"))
+                        .multiPart("postImages", new File(absolutePath + "/grape.jpeg"))
                         .log().all()
-                .when()
+                        .when()
                         .post("/post")
-                .then()
+                        .then()
                         .statusCode(201)
                         .extract()
                         .as(SavePostResponse.class);
@@ -94,14 +95,14 @@ class PostAcceptanceTest {
         assertThat(response.getPostId()).isEqualTo(1L);
         assertThat(response.getContent()).isEqualTo("test-content");
         assertThat(response.getPostImages().size()).isEqualTo(2);
-        assertThat(response.getPostImages().get(0)).isEqualTo("apple.jpeg");
-        assertThat(response.getPostImages().get(1)).isEqualTo("grape.jpeg");
         assertThat(response.getTaggedUserIds().size()).isEqualTo(2);
         assertThat(response.getTaggedUserIds().get(0)).isEqualTo(user2.getId());
         assertThat(response.getTaggedUserIds().get(1)).isEqualTo(user3.getId());
         assertThat(response.getTaggedKeywords().size()).isEqualTo(1);
         assertThat(response.getTaggedKeywords().get(0)).isEqualTo(keyword);
+
         // 테스트로 인해 저장된 파일 삭제
+        deleteTestUploadImages(response);
     }
 
     @Test
@@ -111,9 +112,16 @@ class PostAcceptanceTest {
         given()
                 .port(port)
                 .accept("application/json")
-        .when()
+                .when()
                 .delete("/post/{post-id}", post.getId())
-        .then()
+                .then()
                 .statusCode(204);
+    }
+
+    private void deleteTestUploadImages(SavePostResponse response) {
+        response.getPostImages()
+                .stream()
+                .map(fileName -> new File(absolutePath + "/" + fileName))
+                .forEach(File::delete);
     }
 }

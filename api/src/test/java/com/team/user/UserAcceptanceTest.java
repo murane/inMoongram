@@ -1,10 +1,10 @@
 package com.team.user;
 
-import com.team.QueryConfig;
 import com.team.dbutil.DatabaseCleanup;
 import com.team.dbutil.FollowData;
 import com.team.dbutil.UserData;
 import com.team.post.dto.response.FeedResponse;
+import com.team.post.dto.response.SavePostResponse;
 import com.team.user.dto.output.FollowListOutput;
 import com.team.user.dto.request.UserProfileModificationRequest;
 import com.team.user.dto.response.FollowerInfoListResponse;
@@ -19,12 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.util.StopWatch;
 
-import java.util.*;
 import java.io.File;
+import java.util.*;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -77,11 +76,11 @@ class UserAcceptanceTest {
         User user = userData.saveUser("승화", "a", "a@naver.com");
         int max = 10000;
         List<User> users = new ArrayList<>();
-        for(int i = 0; i < max; i++) {
-            users.add(userData.saveUser("승화"+i, "a"+i, "a"+i+"@naver.com"));
+        for (int i = 0; i < max; i++) {
+            users.add(userData.saveUser("승화" + i, "a" + i, "a" + i + "@naver.com"));
         }
         List<Follow> follows = new ArrayList<>();
-        for(int i = 0; i < max; i++) {
+        for (int i = 0; i < max; i++) {
             follows.add(followData.saveFollow(users.get(i), user));
         }
         StopWatch stopWatch = new StopWatch();
@@ -113,10 +112,10 @@ class UserAcceptanceTest {
         List<User> expected = Arrays.asList(user2);
         Assertions.assertThat(actual.size()).isEqualTo(2);
         for (FollowerInfoResponse followerInfoResponse : actual) {
-            if(followerInfoResponse.getUserId().equals(user2.getId())) {
+            if (followerInfoResponse.getUserId().equals(user2.getId())) {
                 Assertions.assertThat(followerInfoResponse.isFollowBack()).isTrue();
             }
-            if(followerInfoResponse.getUserId().equals(user3.getId())) {
+            if (followerInfoResponse.getUserId().equals(user3.getId())) {
                 Assertions.assertThat(followerInfoResponse.isFollowBack()).isFalse();
             }
         }
@@ -126,9 +125,9 @@ class UserAcceptanceTest {
         Response response =
                 given()
                         .port(port)
-                .when()
+                        .when()
                         .get("user/{id}/followers", id)
-                .thenReturn();
+                        .thenReturn();
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(200);
         return response.getBody()
@@ -156,9 +155,9 @@ class UserAcceptanceTest {
                 contentType(MediaType.APPLICATION_JSON_VALUE).
                 port(port).
                 body(reqDto).
-        when().
+                when().
                 patch("/user/{user_id}/profile", testUserId).
-        then().
+                then().
                 statusCode(204);
     }
 
@@ -181,9 +180,9 @@ class UserAcceptanceTest {
                 contentType(MediaType.APPLICATION_JSON_VALUE).
                 port(port).
                 body(reqDto).
-        when().
+                when().
                 patch("/user/{user_id}/profile", testUserId).
-        then().
+                then().
                 statusCode(400);
     }
 
@@ -200,9 +199,9 @@ class UserAcceptanceTest {
                         .port(port)
                         .accept("application/json")
                         .contentType("application/json")
-                .when()
-                        .get("user/{user-id}/followings",user1.getId())
-                .then()
+                        .when()
+                        .get("user/{user-id}/followings", user1.getId())
+                        .then()
                         .statusCode(200)
                         .extract()
                         .as(FollowListOutput.class);
@@ -255,14 +254,29 @@ class UserAcceptanceTest {
     private void savePost(User user, String content) {
         String path = "src/test/resources/images";
         String absolutePath = new File(path).getAbsolutePath();
-        given()
-                .port(port)
-                .accept(ContentType.JSON)
-                .multiPart("userId", user.getId())
-                .multiPart("content", content)
-                .multiPart("postImages", new File(absolutePath+"/apple.jpeg"))
-        .when()
-                .post("/post")
-        .then();
+        SavePostResponse response =
+                given()
+                        .port(port)
+                        .accept(ContentType.JSON)
+                        .multiPart("userId", user.getId())
+                        .multiPart("content", content)
+                        .multiPart("taggedUserIds", 2L)
+                        .multiPart("taggedUserIds", 3L)
+                        .multiPart("taggedUserIds", 4L)
+                        .multiPart("postImages", new File(absolutePath + "/apple.jpeg"))
+                        .when()
+                        .post("/post")
+                        .then()
+                        .extract()
+                        .as(SavePostResponse.class);
+
+        deleteTestUploadImages(absolutePath, response);
+    }
+
+    private void deleteTestUploadImages(String absolutePath, SavePostResponse response) {
+        response.getPostImages()
+                .stream()
+                .map(fileName -> new File(absolutePath + "/" + fileName))
+                .forEach(File::delete);
     }
 }
