@@ -1,5 +1,6 @@
 package com.team.post;
 
+import com.team.authUtil.TestAuthProvider;
 import com.team.dbutil.DatabaseCleanup;
 import com.team.dbutil.PostData;
 import com.team.dbutil.PostScrapData;
@@ -9,11 +10,11 @@ import com.team.post.dto.response.PostScrapGetResponse;
 import com.team.user.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,6 +24,7 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
+@ActiveProfiles(value = {"dev"})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PostScrapAcceptanceTest {
 
@@ -37,6 +39,9 @@ class PostScrapAcceptanceTest {
 
     @Autowired
     private PostScrapData postScrapData;
+
+    @Autowired
+    private TestAuthProvider testAuthProvider;
 
     @Autowired
     private UserData userData;
@@ -56,9 +61,9 @@ class PostScrapAcceptanceTest {
                 .accept("application/json")
                 .contentType("application/json")
                 .body(new PostScrapSaveRequest(user.getId(), post.getId()))
-        .when()
+                .when()
                 .post("/scrap")
-        .then()
+                .then()
                 .statusCode(201)
                 .body("postScrapId", is(1));
     }
@@ -75,9 +80,9 @@ class PostScrapAcceptanceTest {
                 given()
                         .port(port)
                         .accept("application/json")
-                .when()
+                        .when()
                         .get("/scrap/{user-id}", user.getId())
-                .thenReturn()
+                        .thenReturn()
                         .body()
                         .as(PostScrapGetResponse.class);
 
@@ -85,7 +90,7 @@ class PostScrapAcceptanceTest {
         Collections.sort(actual, Comparator.comparingLong(PostScrapGetResponse.PostScrapInfoResponse::getPostScrapId));
         List<PostScrap> expected = Arrays.asList(postScrap1, postScrap2);
         Assertions.assertThat(actual.size()).isEqualTo(expected.size());
-        for(int i = 0; i < actual.size(); i++) {
+        for (int i = 0; i < actual.size(); i++) {
             Assertions.assertThat(actual.get(i).getPostScrapId()).isEqualTo(expected.get(i).getId());
         }
     }
@@ -101,9 +106,9 @@ class PostScrapAcceptanceTest {
         given()
                 .port(port)
                 .accept("application/json")
-        .when()
-                .delete("/scrap/{user-id}/{post-id}",user.getId(), post1.getId())
-        .then()
+                .when()
+                .delete("/scrap/{user-id}/{post-id}", user.getId(), post1.getId())
+                .then()
                 .statusCode(204);
 
     }

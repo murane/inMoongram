@@ -73,7 +73,7 @@ class PostAcceptanceTest {
                 .build();
 
         SavePostResponse response =
-                given()
+                given().auth().oauth2("asdfv1xcvwq52fdavasad")
                         .port(port)
                         .accept(ContentType.JSON)
                         .multiPart("userId", request.getUserId())
