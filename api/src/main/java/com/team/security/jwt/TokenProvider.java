@@ -1,5 +1,7 @@
 package com.team.security.jwt;
 
+import com.team.auth.CustomUserDetailsService;
+import com.team.config.AppProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -22,17 +24,19 @@ import java.util.Date;
 public class TokenProvider implements InitializingBean {
     public static final long ACCESS_TOKEN_VALID_TIME = 1 * 60 * 30 * 1000L; // 30 minutes
     public static final long REFRESH_TOKEN_VALID_TIME = 1 * 60 * 60 * 24 * 14 * 1000L; // 2 weeks
+    private final CustomUserDetailsService customUserDetailsService;
+    private final AppProperties properties;
 
     private final String secret;
     private Key key;
 
-    public TokenProvider(@Value("${jwt.secret}") String secret) {
-        this.secret = secret;
+    public String getSecret() {
+        return properties.getAuth().getSecret();
     }
 
-    @Override
+    @PostConstruct
     public void afterPropertiesSet() throws Exception {
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        byte[] keyBytes = Decoders.BASE64.decode(getSecret());
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 

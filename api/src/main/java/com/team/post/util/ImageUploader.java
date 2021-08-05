@@ -1,10 +1,9 @@
 package com.team.post.util;
 
+import com.team.config.AppProperties;
 import com.team.post.PostImage;
 import com.team.post.PostImageService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,9 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageUploader {
     private final PostImageService postImageService;
-
-    @Value("${file.dir}")
-    private String location;
+    private final AppProperties appProperties;
 
     public PostImage storeImage(MultipartFile multipartFile) throws IOException {
         if (multipartFile.isEmpty()) {
@@ -60,6 +57,7 @@ public class ImageUploader {
     }
 
     private String getFullPath(String filename) {
+        String location = appProperties.getFile().getDir();
         String absolutePath = new File(location).getAbsolutePath();
         return absolutePath + "/" + filename;
     }
