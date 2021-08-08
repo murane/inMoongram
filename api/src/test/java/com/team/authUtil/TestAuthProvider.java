@@ -1,6 +1,7 @@
 package com.team.authUtil;
 
 import com.team.auth.CustomUserDetailsService;
+import com.team.dbutil.UserData;
 import com.team.security.jwt.TokenProvider;
 import com.team.user.User;
 import com.team.user.UserRepository;
@@ -28,6 +29,19 @@ public class TestAuthProvider {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    public static final String TEST_USER_EMAIL = "murane@naver.com";
+    public static final String TEST_USER_NAME = "정준수";
+    public static final String TEST_USER_NICKNAME = "euroTrucker";
+
+    public Cookie getAccessTokenCookie(User user) {
+        String accessToken = getUserAccessToken(user);
+        return new Cookie.Builder("accessToken", accessToken).build();
+    }
+
+    public Cookie getAccessTokenCookie() {
+        return getAccessTokenCookie(TEST_USER_EMAIL, TEST_USER_NAME, TEST_USER_NICKNAME);
+    }
+
     public Cookie getAccessTokenCookie(String email, String name, String nickName) {
         SignupRequest signupRequest = SignupRequest.builder()
                 .email(email)
@@ -39,14 +53,8 @@ public class TestAuthProvider {
         return new Cookie.Builder("accessToken", accessToken).build();
     }
 
-    private String getUserAccessToken(SignupRequest request) {
-        registerUser(request);
-        Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
-        return tokenProvider.createAccessToken(authentication);
-    }
-
-    private void registerUser(SignupRequest request) {
-        userRepository.save(
+    public User registerUser(SignupRequest request) {
+        return userRepository.save(
                 User.builder()
                         .email(request.getEmail())
                         .nickname(request.getNickname())
@@ -55,6 +63,18 @@ public class TestAuthProvider {
                         .build()
         );
     }
+
+    private String getUserAccessToken(User user) {
+        Authentication authentication = getAuthentication(user.getEmail(), UserData.TEST_USER_PASSWORD);
+        return tokenProvider.createAccessToken(authentication);
+    }
+
+    private String getUserAccessToken(SignupRequest request) {
+        registerUser(request);
+        Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
+        return tokenProvider.createAccessToken(authentication);
+    }
+
 
     private Authentication getAuthentication(String email, String password) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);

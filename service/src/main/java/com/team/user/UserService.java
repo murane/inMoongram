@@ -1,7 +1,6 @@
 package com.team.user;
 
 import com.team.exception.IdNotFoundException;
-import com.team.user.dto.input.FollowerInfoListInput;
 import com.team.user.dto.input.UserProfileModificationInput;
 import com.team.user.dto.output.FollowListOutput;
 import com.team.user.dto.output.FollowerInfoListOutput;
@@ -29,10 +28,10 @@ public class UserService {
     }
 
     @Transactional
-    public FollowerInfoListOutput getFollowerList(FollowerInfoListInput command) {
-        List<Follower> followers = userRepository.findFollowerUserById(command.getUserId());
+    public FollowerInfoListOutput getFollowerList(Long userId) {
+        List<Follower> followers = userRepository.findFollowerUserById(userId);
 
-        return new FollowerInfoListOutput(followers, command.getUserId());
+        return new FollowerInfoListOutput(followers, userId);
     }
 
     @Transactional(readOnly = true)

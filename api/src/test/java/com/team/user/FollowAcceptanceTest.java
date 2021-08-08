@@ -25,6 +25,7 @@ class FollowAcceptanceTest {
 
     @Autowired
     private DatabaseCleanup dbCleanup;
+
     @Autowired
     private TestAuthProvider testAuthProvider;
 
@@ -66,14 +67,14 @@ class FollowAcceptanceTest {
 
     @Test
     void 팔로우() {
-        Cookie cookie = testAuthProvider.getAccessTokenCookie("test@test.com", "userName", "userNickName");
+        Cookie cookie = testAuthProvider.getAccessTokenCookie(user1);
 
         given()
                 .port(port)
                 .cookie(cookie)
                 .accept("application/json")
                 .contentType("application/json")
-                .body(new FollowRequest(user1.getId(), user2.getId()))
+                .body(new FollowRequest(user2.getId()))
                 .when()
                 .post("/follow")
                 .then()

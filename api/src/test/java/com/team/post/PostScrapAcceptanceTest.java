@@ -8,6 +8,7 @@ import com.team.dbutil.UserData;
 import com.team.post.dto.request.PostScrapSaveRequest;
 import com.team.post.dto.response.PostScrapGetResponse;
 import com.team.user.User;
+import io.restassured.http.Cookie;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -53,14 +54,16 @@ class PostScrapAcceptanceTest {
 
     @Test
     void 스크랩_저장() {
+        Cookie cookie = testAuthProvider.getAccessTokenCookie();
         User user = userData.saveUser("승화", "peach", "a@naver.com");
         Post post = postData.savePost(user);
 
         given()
                 .port(port)
+                .cookie(cookie)
                 .accept("application/json")
                 .contentType("application/json")
-                .body(new PostScrapSaveRequest(user.getId(), post.getId()))
+                .body(new PostScrapSaveRequest(post.getId()))
                 .when()
                 .post("/scrap")
                 .then()
@@ -76,9 +79,12 @@ class PostScrapAcceptanceTest {
         PostScrap postScrap1 = postScrapData.savePostScrap(user, post1);
         PostScrap postScrap2 = postScrapData.savePostScrap(user, post2);
 
+        Cookie cookie = testAuthProvider.getAccessTokenCookie(user);
+
         PostScrapGetResponse response =
                 given()
                         .port(port)
+                        .cookie(cookie)
                         .accept("application/json")
                         .when()
                         .get("/scrap/{user-id}", user.getId())
@@ -103,11 +109,14 @@ class PostScrapAcceptanceTest {
         PostScrap postScrap1 = postScrapData.savePostScrap(user, post1);
         PostScrap postScrap2 = postScrapData.savePostScrap(user, post2);
 
+        Cookie cookie = testAuthProvider.getAccessTokenCookie(user);
+
         given()
                 .port(port)
+                .cookie(cookie)
                 .accept("application/json")
                 .when()
-                .delete("/scrap/{user-id}/{post-id}", user.getId(), post1.getId())
+                .delete("/scrap/{post-id}", post1.getId())
                 .then()
                 .statusCode(204);
 

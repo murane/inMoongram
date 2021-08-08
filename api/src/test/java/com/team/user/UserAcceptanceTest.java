@@ -58,8 +58,6 @@ class UserAcceptanceTest {
     @Test
     @DisplayName("팔로워 리스트 가져오기")
     void getFollowerList() {
-        Cookie cookie = testAuthProvider.getAccessTokenCookie("test@test.com", "testUser", "myNick");
-
         User user1 = userData.saveUser("승화", "a", "a@naver.com");
         User user2 = userData.saveUser("준수", "b", "b@naver.com");
         User user3 = userData.saveUser("용우", "c", "c@naver.com");
@@ -68,7 +66,9 @@ class UserAcceptanceTest {
         Follow follow2 = followData.saveFollow(user3, user1);
         Follow follow3 = followData.saveFollow(user4, user1);
 
-        List<FollowerInfoResponse> actual = getFollowerTest(cookie, user1.getId());
+        Cookie cookie = testAuthProvider.getAccessTokenCookie(user1);
+
+        List<FollowerInfoResponse> actual = getFollowerTest(cookie);
         actual.sort(Comparator.comparingLong(FollowerInfoResponse::getUserId));
         List<User> expected = Arrays.asList(user2, user3, user4);
         Assertions.assertThat(actual.size()).isEqualTo(expected.size());
@@ -92,9 +92,10 @@ class UserAcceptanceTest {
         for (int i = 0; i < max; i++) {
             follows.add(followData.saveFollow(users.get(i), user));
         }
+        Cookie cookie = testAuthProvider.getAccessTokenCookie(user);
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        List<FollowerInfoResponse> actual = getFollowerTest(user.getId());
+        List<FollowerInfoResponse> actual = getFollowerTest(cookie);
         stopWatch.stop();
         System.out.println(stopWatch.prettyPrint());
         actual.sort(Comparator.comparingLong(FollowerInfoResponse::getUserId));
@@ -115,8 +116,8 @@ class UserAcceptanceTest {
         Follow follow1 = followData.saveFollow(user2, user1);
         Follow follow2 = followData.saveFollow(user3, user1);
         Follow follow3 = followData.saveFollow(user1, user2);
-
-        List<FollowerInfoResponse> actual = getFollowerTest(user1.getId());
+        Cookie cookie = testAuthProvider.getAccessTokenCookie(user1);
+        List<FollowerInfoResponse> actual = getFollowerTest(cookie);
         actual.sort(Comparator.comparingLong(FollowerInfoResponse::getUserId));
         List<User> expected = Arrays.asList(user2);
         Assertions.assertThat(actual.size()).isEqualTo(2);
@@ -130,7 +131,7 @@ class UserAcceptanceTest {
         }
     }
 
-    List<FollowerInfoResponse> getFollowerTest(Cookie cookie, Long id) {
+    List<FollowerInfoResponse> getFollowerTest(Cookie cookie) {
         Response response =
                 given()
                         .cookie(cookie)
@@ -204,13 +205,16 @@ class UserAcceptanceTest {
         Follow follow1 = followData.saveFollow(user1, user2);
         Follow follow2 = followData.saveFollow(user1, user3);
 
+        Cookie cookie = testAuthProvider.getAccessTokenCookie(user1);
+
         FollowListOutput response =
                 given()
                         .port(port)
+                        .cookie(cookie)
                         .accept("application/json")
                         .contentType("application/json")
                         .when()
-                        .get("user/{user-id}/followings", user1.getId())
+                        .get("user/followings")
                         .then()
                         .statusCode(200)
                         .extract()
@@ -238,6 +242,8 @@ class UserAcceptanceTest {
         Follow follow1 = followData.saveFollow(user1, user2);
         Follow follow2 = followData.saveFollow(user1, user3);
 
+        Cookie cookie = testAuthProvider.getAccessTokenCookie(user1);
+
         savePost(user2, "first");
         savePost(user3, "second");
         savePost(user4, "third");
@@ -246,10 +252,11 @@ class UserAcceptanceTest {
         FeedResponse response =
                 given()
                         .port(port)
+                        .cookie(cookie)
                         .accept("application/json")
                         .param("page-no", 1)
                         .when()
-                        .get("/user/{user-id}/feed", user1.getId())
+                        .get("/user/feed")
                         .then()
                         .statusCode(200)
                         .extract()
@@ -264,11 +271,12 @@ class UserAcceptanceTest {
     private void savePost(User user, String content) {
         String path = "src/test/resources/images";
         String absolutePath = new File(path).getAbsolutePath();
+        Cookie cookie = testAuthProvider.getAccessTokenCookie(user);
         SavePostResponse response =
                 given()
                         .port(port)
+                        .cookie(cookie)
                         .accept(ContentType.JSON)
-                        .multiPart("userId", user.getId())
                         .multiPart("content", content)
                         .multiPart("taggedUserIds", 2L)
                         .multiPart("taggedUserIds", 3L)

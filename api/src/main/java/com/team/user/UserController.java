@@ -5,7 +5,6 @@ import com.team.post.dto.input.FeedInput;
 import com.team.post.dto.output.FeedOutput;
 import com.team.post.dto.response.FeedResponse;
 import com.team.security.CurrentUser;
-import com.team.user.dto.input.FollowerInfoListInput;
 import com.team.user.dto.request.UserProfileModificationRequest;
 import com.team.user.dto.response.FollowListResponse;
 import com.team.user.dto.response.FollowerInfoListResponse;
@@ -34,7 +33,7 @@ public class UserController {
     public ResponseEntity<FollowerInfoListResponse> getFollowerList(@CurrentUser Long userId) {
         return ResponseEntity.ok(
                 new FollowerInfoListResponse(
-                        userService.getFollowerList(new FollowerInfoListInput(userId))
+                        userService.getFollowerList(userId)
                 )
         );
     }

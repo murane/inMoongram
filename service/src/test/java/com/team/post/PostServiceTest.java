@@ -100,14 +100,13 @@ class PostServiceTest {
         given(postTaggedKeywordService.tagAll(any(), any())).willReturn(keywordTags);
 
         SavePostInput input = SavePostInput.builder()
-                .userId(user1.getId())
                 .content("test-content")
                 .postImageIds(postImages.stream().map(PostImage::getId).collect(Collectors.toList()))
                 .taggedUserIds(Arrays.asList(user2.getId(), user3.getId()))
                 .taggedKeywords(Arrays.asList("inMoongram", "spring"))
                 .build();
 
-        SavePostOutput output = postService.save(input);
+        SavePostOutput output = postService.save(user1.getId(), input);
 
         assertThat(output.getContent()).isEqualTo(input.getContent());
         assertThat(output.getPostImages().size()).isEqualTo(2);
