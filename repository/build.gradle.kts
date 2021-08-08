@@ -13,11 +13,11 @@ dependencies {
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
     annotationProcessor("jakarta.annotation:jakarta.annotation-api")
     api("org.springframework.boot:spring-boot-starter-data-jpa")
-    runtimeOnly ("com.h2database:h2")
+    runtimeOnly("com.h2database:h2")
     api("org.springframework.boot:spring-boot-starter-data-redis")
 }
 
-val generated="src/main/generated"
+val generated = "src/main/generated"
 sourceSets {
     main {
         java.srcDirs(generated)
@@ -28,6 +28,6 @@ tasks.compileJava {
     options.generatedSourceOutputDirectory.set(file(generated))
 }
 
-tasks.clean {
+tasks.named("clean") {
     file(generated).delete()
 }

@@ -1,12 +1,13 @@
 package com.team.user;
 
 import com.team.exception.IdNotFoundException;
-import com.team.user.dto.input.FollowerInfoListInput;
 import com.team.user.dto.input.SignupInput;
+import com.team.user.dto.input.UserInfoInput;
 import com.team.user.dto.input.UserProfileModificationInput;
 import com.team.user.dto.output.FollowListOutput;
 import com.team.user.dto.output.FollowerInfoListOutput;
 import com.team.user.dto.output.SignupOutput;
+import com.team.user.dto.output.UserInfoOutput;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,13 @@ public class UserService {
     }
 
     @Transactional
+    public UserInfoOutput getUserInfo(UserInfoInput input) {
+        User user = userRepository.findById(input.getUserId())
+                .orElseThrow(IdNotFoundException::new);
+        return new UserInfoOutput(user);
+    }
+
+    @Transactional
     public void modifyUserProfile(Long userId, UserProfileModificationInput payload) {
         User user = findUserById(userId);
         user.modifyProfile(payload.getEmail(), payload.getNickname(), payload.getName(),
@@ -54,10 +62,10 @@ public class UserService {
     }
 
     @Transactional
-    public FollowerInfoListOutput getFollowerList(FollowerInfoListInput command) {
-        List<Follower> followers = userRepository.findFollowerUserById(command.getUserId());
+    public FollowerInfoListOutput getFollowerList(Long userId) {
+        List<Follower> followers = userRepository.findFollowerUserById(userId);
 
-        return new FollowerInfoListOutput(followers, command.getUserId());
+        return new FollowerInfoListOutput(followers, userId);
     }
 
     @Transactional(readOnly = true)
@@ -88,7 +96,7 @@ public class UserService {
     }
 
     @Transactional
-    public List<User> findUsersByIds(List<Long> userIds){
+    public List<User> findUsersByIds(List<Long> userIds) {
         return userIds.stream()
                 .map(this::findUserById)
                 .collect(Collectors.toList());

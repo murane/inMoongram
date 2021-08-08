@@ -23,7 +23,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
 import java.util.Arrays;
 
 import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.on;
@@ -41,7 +40,6 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest request) {
         SignupOutput output = userService.signup(request.toInput());
-        authService.sendVerificationMail(request.getEmail(), request.getNickname());
         UriComponents uriComponents = MvcUriComponentsBuilder
                 .fromMethodCall(on(AuthController.class).signup(request))
                 .build();
@@ -92,10 +90,10 @@ public class AuthController {
 
     @GetMapping("/verify/{key}")
     public ResponseEntity<String> verifyEmail(@PathVariable("key") String key) {
-        if (authService.verifyEmail(key)) {
-            // TODO 유저 권한 부여 설정
+        try {
+            authService.verifyEmail(key);
             return ResponseEntity.ok("이메일을 성공적으로 인증했습니다.");
-        } else {
+        } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body("이메일 인증에 실패했습니다.");
         }
