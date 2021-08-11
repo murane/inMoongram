@@ -46,7 +46,9 @@ public class AuthService {
                         .password(passwordEncoder.encode(input.getPassword()))
                         .build()
         );
+
         publisher.publishEvent(new SignupEvent(saveUser.getEmail(), saveUser.getNickname()));
+
         return new SignupOutput(saveUser);
     }
 

@@ -1,5 +1,6 @@
 package com.team.user;
 
+import com.team.auth.AuthService;
 import com.team.security.jwt.TokenProvider;
 import com.team.user.dto.output.SignupOutput;
 import com.team.user.dto.request.LoginRequest;
@@ -39,7 +40,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest request) {
-        SignupOutput output = userService.signup(request.toInput());
+        SignupOutput output = authService.signup(request.toInput());
         UriComponents uriComponents = MvcUriComponentsBuilder
                 .fromMethodCall(on(AuthController.class).signup(request))
                 .build();
