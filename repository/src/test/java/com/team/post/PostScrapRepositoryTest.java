@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @DataJpaTest
 @Import(TestConfig.class)
+@ActiveProfiles(profiles = {"test"})
 public class PostScrapRepositoryTest {
 
     @Autowired
@@ -45,8 +47,8 @@ public class PostScrapRepositoryTest {
                 .password("12344")
                 .phoneNumber("010-2224-3334")
                 .build();
-        post1 = new Post("안녕1",user);
-        post2 = new Post("안녕2",user);
+        post1 = new Post("안녕1", user);
+        post2 = new Post("안녕2", user);
         post3 = new Post("안녕3", user2);
         postScrap1 = new PostScrap(user, post1);
         postScrap2 = new PostScrap(user, post2);
@@ -67,7 +69,7 @@ public class PostScrapRepositoryTest {
 
         Collections.sort(postScraps, Comparator.comparingLong(PostScrap::getId));
         List<PostScrap> expected = Arrays.asList(postScrap1, postScrap2);
-        for(int i = 0; i < postScraps.size(); i++) {
+        for (int i = 0; i < postScraps.size(); i++) {
             Assertions.assertThat(postScraps.get(i).getId()).isEqualTo(expected.get(i).getId());
         }
     }

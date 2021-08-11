@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(indexes = @Index(name = "i_tagKeyword", columnList = "keyword"))
+@Table(indexes = @Index(name = "i_tagKeyword", columnList = "keyword", unique = true))
 public class TagKeyword {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

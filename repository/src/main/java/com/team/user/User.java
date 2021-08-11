@@ -16,6 +16,9 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        indexes = {@Index(name = "email_index", columnList = "email", unique = true)}
+)
 public class User {
 
     @Id

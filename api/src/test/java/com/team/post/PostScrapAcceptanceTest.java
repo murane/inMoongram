@@ -87,7 +87,7 @@ class PostScrapAcceptanceTest {
                         .cookie(cookie)
                         .accept("application/json")
                         .when()
-                        .get("/scrap/{user-id}", user.getId())
+                        .get("/scrap")
                         .thenReturn()
                         .body()
                         .as(PostScrapGetResponse.class);

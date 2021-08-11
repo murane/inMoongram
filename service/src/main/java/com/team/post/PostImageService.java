@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PostImageService {
-    @Value("${file.dir}")
+    @Value("${app.file.dir}")
     private String location;
 
     private final PostImageRepository postImageRepository;

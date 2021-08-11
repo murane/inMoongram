@@ -30,26 +30,25 @@ public class Post {
     @CreatedDate
     private LocalDateTime createdAt;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private Set<PostImage> postImages = new LinkedHashSet<>();
+    private final Set<PostImage> postImages = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private Set<PostLike> postLikes = new LinkedHashSet<>();
+    private final Set<PostLike> postLikes = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private Set<PostTaggedUser> postTaggedUsers = new LinkedHashSet<>();
+    private final Set<PostTaggedUser> postTaggedUsers = new LinkedHashSet<>();
 
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private Set<PostTaggedKeyword> postTaggedKeywords = new LinkedHashSet<>();
+    private final Set<PostTaggedKeyword> postTaggedKeywords = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private Set<Comment> comments = new LinkedHashSet<>();
+    private final Set<Comment> comments = new LinkedHashSet<>();
 
     public Post(String content, User user) {
         this.content = content;
@@ -73,7 +72,7 @@ public class Post {
         this.postTaggedUsers.addAll(postTaggedUsers);
     }
 
-    public void addTaggedKeywords(List<PostTaggedKeyword> postTaggedKeywords){
+    public void addTaggedKeywords(List<PostTaggedKeyword> postTaggedKeywords) {
         this.postTaggedKeywords.addAll(postTaggedKeywords);
     }
 

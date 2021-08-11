@@ -103,7 +103,7 @@ class SearchAcceptanceTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get("/api/search")
+                .get("/search")
                 .thenReturn();
 
         assertThat(response.getStatusCode()).isEqualTo(200);

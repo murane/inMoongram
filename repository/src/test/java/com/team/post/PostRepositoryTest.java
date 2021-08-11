@@ -11,12 +11,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@ActiveProfiles(profiles = {"test"})
 @Import(TestConfig.class)
 public class PostRepositoryTest {
     @Autowired
@@ -49,7 +51,7 @@ public class PostRepositoryTest {
         assertThat(feed.size()).isEqualTo(3);
     }
 
-    private Post createPost(String content ,User user) {
+    private Post createPost(String content, User user) {
         Post post = new Post(content, user);
         return postRepository.save(post);
     }
