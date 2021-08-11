@@ -1,0 +1,12 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            client-id: 550779499384056
+            client-secret: 37f6fd036ac5003eaf0cea0cccae1fec
+            authorization-grant-type: authorization_code
+        provider:
+          facebook:
+            token-uri: https://graph.facebook.com/v11.0/oauth/access_token

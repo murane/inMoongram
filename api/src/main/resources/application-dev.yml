@@ -25,6 +25,9 @@ spring:
   config:
     activate:
       on-profile: dev
+    import:
+      classpath:application-oauth2.yml
+
 
 app:
   file:
@@ -32,3 +35,7 @@ app:
   auth:
     secret: WTB1X2M0bnRfTDBva190aDFzX3NlY3IzdF9LM3lfUjFnaHQ/MTIzMjEwMTAxMTAxMjEyMTIxMzEzMTMxMzEzMQ==
     expiretime: 864000000
+
+#logging:
+#  level:
+#    root: debug
