@@ -30,6 +30,14 @@ subprojects {
         mavenCentral()
     }
 
+    tasks.named("bootJar") {
+        enabled = false
+    }
+
+    tasks.named("jar") {
+        enabled = true
+    }
+
     dependencies {
         api("org.springframework.boot:spring-boot-starter-security")
         api("org.springframework.security:spring-security-oauth2-client")
